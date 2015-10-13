@@ -17,10 +17,11 @@ namespace Vuforia
         #region PRIVATE_MEMBER_VARIABLES
  
         private TrackableBehaviour mTrackableBehaviour;
-    
+
         #endregion // PRIVATE_MEMBER_VARIABLES
 
-
+        public bool lastTracked;
+        public PresentationHandler handler;
 
         #region UNTIY_MONOBEHAVIOUR_METHODS
     
@@ -83,6 +84,19 @@ namespace Vuforia
                 component.enabled = true;
             }
 
+            foreach (GameObject obj in handler.imageSlides)
+            {
+                if (this == obj.GetComponent<DefaultTrackableEventHandler>())
+                {
+                    lastTracked = true;
+                    handler.lastTrackedSlide = obj;
+                }
+                else
+                {
+                   obj.GetComponent<DefaultTrackableEventHandler>().lastTracked = false;
+                }
+            }
+
             Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " found");
         }
 
@@ -92,18 +106,20 @@ namespace Vuforia
             Renderer[] rendererComponents = GetComponentsInChildren<Renderer>(true);
             Collider[] colliderComponents = GetComponentsInChildren<Collider>(true);
 
-            // Disable rendering:
-            foreach (Renderer component in rendererComponents)
-            {
-                component.enabled = false;
-            }
+            //if (lastTracked == false)
+            //{
+                // Disable rendering:
+                foreach (Renderer component in rendererComponents)
+                {
+                    component.enabled = false;
+                }
 
-            // Disable colliders:
-            foreach (Collider component in colliderComponents)
-            {
-                component.enabled = false;
-            }
-
+                // Disable colliders:
+                foreach (Collider component in colliderComponents)
+                {
+                    component.enabled = false;
+                }
+            //}
             Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " lost");
         }
 
