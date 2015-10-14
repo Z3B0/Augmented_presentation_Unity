@@ -93,20 +93,31 @@ public class PresentationHandler : MonoBehaviour
 
     }
 
-    // Update is called once per frame
-    void Update() {
-
-        if(Input.GetKeyDown("a") && (!isLerpingLeft && !isLerpingRight) && (!isLeftFocus))
+    public void StartLerping(string direction)
+    {
+        if ((direction == "left") && (!isLerpingLeft && !isLerpingRight) && (!isLeftFocus))
         {
             isLerpingLeft = true;
             timeStartedLerping = Time.time;
             Debug.Log("Started lerping left");
-        }
-        if (Input.GetKeyDown("s") && (!isLerpingLeft && !isLerpingRight) && (!isRightFocus))
+        } else if ((direction == "right") && (!isLerpingLeft && !isLerpingRight) && (!isRightFocus))
         {
             isLerpingRight = true;
             timeStartedLerping = Time.time;
             Debug.Log("Started lerping right");
+        }
+    }
+
+    // Update is called once per frame
+    void Update() {
+
+        if(Input.GetKeyDown("a"))
+        {
+            StartLerping("left");
+        }
+        if (Input.GetKeyDown("s"))
+        {
+            StartLerping("right");
         }
 
     }
