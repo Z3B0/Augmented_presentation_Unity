@@ -18,6 +18,10 @@ namespace Vuforia
  
         private TrackableBehaviour mTrackableBehaviour;
 
+        private float timeAtWhichMarkerLost;
+
+        private bool markerCurrentlyLost;
+
         #endregion // PRIVATE_MEMBER_VARIABLES
 
         public bool lastTracked;
@@ -69,6 +73,9 @@ namespace Vuforia
 
         private void OnTrackingFound()
         {
+
+            markerCurrentlyLost = false;
+
             Renderer[] rendererComponents = GetComponentsInChildren<Renderer>(true);
             Collider[] colliderComponents = GetComponentsInChildren<Collider>(true);
 
@@ -84,31 +91,43 @@ namespace Vuforia
                 component.enabled = true;
             }
 
-            foreach (GameObject obj in handler.imageSlides)
+            if (!lastTracked)
             {
-                if (this == obj.GetComponent<DefaultTrackableEventHandler>())
+                for (int i = 0; i < handler.imageSlides.Length; i++)
                 {
-                    lastTracked = true;
-                    handler.lastTrackedSlide = obj;
-                    Debug.Log("Set lastTrackedSlide to:" + obj);
-                }
-                else
-                {
-                   obj.GetComponent<DefaultTrackableEventHandler>().lastTracked = false;
+                    if (this == handler.imageSlides[i].GetComponent<DefaultTrackableEventHandler>())
+                    {
+                        lastTracked = true;
+                        handler.SetLastTrackedIndex(i + "");
+                    }
+                    else
+                    {
+                        handler.imageSlides[i].GetComponent<DefaultTrackableEventHandler>().lastTracked = false;
+                    }
                 }
             }
-
             Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " found");
         }
 
 
         private void OnTrackingLost()
         {
+
+            timeAtWhichMarkerLost = Time.time;
+            markerCurrentlyLost = true;
+
+            /*
+            transform.parent.GetComponentInParent<GameObject>().FindComponentInChildWithTag<Transform>("SlideText").localEulerAngles = new Vector3(90.0f, 0f, 0f);
+            transform.parent.GetComponentInParent<GameObject>().FindComponentInChildWithTag<Transform>("SlideBackground").localEulerAngles = new Vector3(0f, 0f, 0f);
+            transform.parent.GetComponentInParent<GameObject>().FindComponentInChildWithTag<Transform>("SlideModel").localEulerAngles = new Vector3(0f, 0f, 0f);
+            */
+
+            /*
             Renderer[] rendererComponents = GetComponentsInChildren<Renderer>(true);
             Collider[] colliderComponents = GetComponentsInChildren<Collider>(true);
 
-            //if (lastTracked == false)
-            //{
+            if (lastTracked == false)
+            {
                 // Disable rendering:
                 foreach (Renderer component in rendererComponents)
                 {
@@ -120,10 +139,41 @@ namespace Vuforia
                 {
                     component.enabled = false;
                 }
-            //}
-            Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " lost");
+            }
+            */
+            Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + "temporarily lost");
+            Debug.Log("Time marker got lost: " + timeAtWhichMarkerLost);
         }
 
         #endregion // PRIVATE_METHODS
+
+        void FixedUpdate()
+        {
+
+            float currentTime = Time.time;
+            //Debug.Log("CurrentTime - timeAtWhichMarkerLost = " + (currentTime - timeAtWhichMarkerLost));
+            //Debug.Log("markerLost: " + markerCurrentlyLost);
+
+            if ((currentTime - timeAtWhichMarkerLost >= 2.0f) && markerCurrentlyLost)
+            {
+
+                Renderer[] rendererComponents = GetComponentsInChildren<Renderer>(true);
+                Collider[] colliderComponents = GetComponentsInChildren<Collider>(true);
+                
+                    // Disable rendering:
+                    foreach (Renderer component in rendererComponents)
+                    {
+                        component.enabled = false;
+                    }
+
+                    // Disable colliders:
+                    foreach (Collider component in colliderComponents)
+                    {
+                        component.enabled = false;
+                    }
+
+                Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " lost");
+            }
+        }
     }
 }

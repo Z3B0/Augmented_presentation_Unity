@@ -6,7 +6,7 @@ public class PresentationHandler : MonoBehaviour
 {
 
     public GameObject[] imageSlides;
-    public GameObject lastTrackedSlide;
+    public int lastTrackedSlideIndex;
 
     //The start and finish positions for the interpolation
     private Vector3 originalTextSize;
@@ -83,8 +83,6 @@ public class PresentationHandler : MonoBehaviour
             imageSlides[i].FindComponentInChildWithTag<Renderer>("SlideBackground").materials[0].SetTexture("_MainTex", textures[JS["slides"][i]["background"].AsInt]);
         }
 
-        lastTrackedSlide = imageSlides[0];
-
     }
 
 
@@ -93,6 +91,14 @@ public class PresentationHandler : MonoBehaviour
 
         Setup("{\"name\":\"Test lecture one\",\"date\":\"2015-10-01 15:30\",\"speakers\":[{\"id\":\"01\",\"name\":\"Willy Wonka\"},{\"id\":\"02\",\"name\":\"Evel Knievel\"}],\"slides\":[{\"text\":\"Test <color=green>slide</color> 1\",\"background\":\"01\",\"3dmodel\":null},{\"text\":\"Test <color=red>slide</color> 2\",\"background\":\"02\",\"3dmodel\":null},{\"text\":\"Test <color=blue>slide</color> 3\",\"background\":\"03\",\"3dmodel\":null}]}");
 
+    }
+
+    public void SetLastTrackedIndex(string index)
+    {
+        lastTrackedSlideIndex = int.Parse(index);
+        AndroidJavaClass jc = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+        AndroidJavaObject jo = jc.GetStatic<AndroidJavaObject>("currentActivity");
+        //jo.Call(“setLastSlideIndex”, index);
     }
 
     public void StartLerping(string direction)
@@ -133,14 +139,14 @@ public class PresentationHandler : MonoBehaviour
             float percentageComplete = timeSinceStarted / timeToSpendLerping;
 
             // Change sizes
-            lastTrackedSlide.FindComponentInChildWithTag<Transform>("SlideText").localScale = Vector3.Lerp(originalTextSize, shiftedTextSize, percentageComplete);
-            lastTrackedSlide.FindComponentInChildWithTag<Transform>("SlideBackground").localScale = Vector3.Lerp(originalBackgroundSize, shiftedBackgroundSize, percentageComplete);
-            lastTrackedSlide.FindComponentInChildWithTag<Transform>("SlideModel").localScale = Vector3.Lerp(originalModelSize, shiftedModelSize, percentageComplete);
+            imageSlides[lastTrackedSlideIndex].FindComponentInChildWithTag<Transform>("SlideText").localScale = Vector3.Lerp(originalTextSize, shiftedTextSize, percentageComplete);
+            imageSlides[lastTrackedSlideIndex].FindComponentInChildWithTag<Transform>("SlideBackground").localScale = Vector3.Lerp(originalBackgroundSize, shiftedBackgroundSize, percentageComplete);
+            imageSlides[lastTrackedSlideIndex].FindComponentInChildWithTag<Transform>("SlideModel").localScale = Vector3.Lerp(originalModelSize, shiftedModelSize, percentageComplete);
 
             // Change positions
-            lastTrackedSlide.FindComponentInChildWithTag<Transform>("SlideText").localPosition = Vector3.Lerp(originalTextPos, shiftedTextPos, percentageComplete);
-            lastTrackedSlide.FindComponentInChildWithTag<Transform>("SlideBackground").localPosition = Vector3.Lerp(originalBackgroundPos, shiftedBackgroundPos, percentageComplete);
-            lastTrackedSlide.FindComponentInChildWithTag<Transform>("SlideModel").localPosition = Vector3.Lerp(originalModelPos, shiftedModelPos, percentageComplete);
+            imageSlides[lastTrackedSlideIndex].FindComponentInChildWithTag<Transform>("SlideText").localPosition = Vector3.Lerp(originalTextPos, shiftedTextPos, percentageComplete);
+            imageSlides[lastTrackedSlideIndex].FindComponentInChildWithTag<Transform>("SlideBackground").localPosition = Vector3.Lerp(originalBackgroundPos, shiftedBackgroundPos, percentageComplete);
+            imageSlides[lastTrackedSlideIndex].FindComponentInChildWithTag<Transform>("SlideModel").localPosition = Vector3.Lerp(originalModelPos, shiftedModelPos, percentageComplete);
 
             if(percentageComplete >= 1.0f)
             {
@@ -156,14 +162,14 @@ public class PresentationHandler : MonoBehaviour
             float percentageComplete = timeSinceStarted / timeToSpendLerping;
 
             // Change sizes
-            lastTrackedSlide.FindComponentInChildWithTag<Transform>("SlideText").localScale = Vector3.Lerp(shiftedTextSize, originalTextSize, percentageComplete);
-            lastTrackedSlide.FindComponentInChildWithTag<Transform>("SlideBackground").localScale = Vector3.Lerp(shiftedBackgroundSize, originalBackgroundSize, percentageComplete);
-            lastTrackedSlide.FindComponentInChildWithTag<Transform>("SlideModel").localScale = Vector3.Lerp(shiftedModelSize, originalModelSize, percentageComplete);
+            imageSlides[lastTrackedSlideIndex].FindComponentInChildWithTag<Transform>("SlideText").localScale = Vector3.Lerp(shiftedTextSize, originalTextSize, percentageComplete);
+            imageSlides[lastTrackedSlideIndex].FindComponentInChildWithTag<Transform>("SlideBackground").localScale = Vector3.Lerp(shiftedBackgroundSize, originalBackgroundSize, percentageComplete);
+            imageSlides[lastTrackedSlideIndex].FindComponentInChildWithTag<Transform>("SlideModel").localScale = Vector3.Lerp(shiftedModelSize, originalModelSize, percentageComplete);
 
             // Change positions
-            lastTrackedSlide.FindComponentInChildWithTag<Transform>("SlideText").localPosition = Vector3.Lerp(shiftedTextPos, originalTextPos, percentageComplete);
-            lastTrackedSlide.FindComponentInChildWithTag<Transform>("SlideBackground").localPosition = Vector3.Lerp(shiftedBackgroundPos, originalBackgroundPos, percentageComplete);
-            lastTrackedSlide.FindComponentInChildWithTag<Transform>("SlideModel").localPosition = Vector3.Lerp(shiftedModelPos, originalModelPos, percentageComplete);
+            imageSlides[lastTrackedSlideIndex].FindComponentInChildWithTag<Transform>("SlideText").localPosition = Vector3.Lerp(shiftedTextPos, originalTextPos, percentageComplete);
+            imageSlides[lastTrackedSlideIndex].FindComponentInChildWithTag<Transform>("SlideBackground").localPosition = Vector3.Lerp(shiftedBackgroundPos, originalBackgroundPos, percentageComplete);
+            imageSlides[lastTrackedSlideIndex].FindComponentInChildWithTag<Transform>("SlideModel").localPosition = Vector3.Lerp(shiftedModelPos, originalModelPos, percentageComplete);
 
             if (percentageComplete >= 1.0f)
             {
