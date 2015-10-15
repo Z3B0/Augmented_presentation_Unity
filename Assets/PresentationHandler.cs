@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using SimpleJSON;
+using Vuforia;
 
 public class PresentationHandler : MonoBehaviour
 {
@@ -39,6 +40,8 @@ public class PresentationHandler : MonoBehaviour
 
 
     public void Setup(string json) {
+
+
 
         timeToSpendLerping = 3.0f;
 
@@ -91,7 +94,25 @@ public class PresentationHandler : MonoBehaviour
 
         Setup("{\"name\":\"Test lecture one\",\"date\":\"2015-10-01 15:30\",\"speakers\":[{\"id\":\"01\",\"name\":\"Willy Wonka\"},{\"id\":\"02\",\"name\":\"Evel Knievel\"}],\"slides\":[{\"text\":\"Test <color=green>slide</color> 1\",\"background\":\"01\",\"3dmodel\":null},{\"text\":\"Test <color=red>slide</color> 2\",\"background\":\"02\",\"3dmodel\":null},{\"text\":\"Test <color=blue>slide</color> 3\",\"background\":\"03\",\"3dmodel\":null}]}");
 
+        VuforiaBehaviour.Instance.RegisterVuforiaStartedCallback(OnVuforiaStarted);
+        VuforiaBehaviour.Instance.RegisterOnPauseCallback(OnPaused);
     }
+
+    private void OnVuforiaStarted()
+    {
+        CameraDevice.Instance.SetFocusMode(CameraDevice.FocusMode.FOCUS_MODE_CONTINUOUSAUTO);
+    }
+
+    private void OnPaused(bool paused)
+    {
+        if (!paused) // resumed
+        {
+            // Set again autofocus mode when app is resumed
+            CameraDevice.Instance.SetFocusMode(CameraDevice.FocusMode.FOCUS_MODE_CONTINUOUSAUTO);
+        }
+    }
+
+
 
     public void SetLastTrackedIndex(string index)
     {
