@@ -2,6 +2,7 @@
 using System.Collections;
 using SimpleJSON;
 using Vuforia;
+using System;
 
 public class PresentationHandler : MonoBehaviour
 {
@@ -117,9 +118,14 @@ public class PresentationHandler : MonoBehaviour
     public void SetLastTrackedIndex(string index)
     {
         lastTrackedSlideIndex = int.Parse(index);
-        AndroidJavaClass jc = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-        AndroidJavaObject jo = jc.GetStatic<AndroidJavaObject>("currentActivity");
-        //jo.Call(“setLastSlideIndex”, index);
+		try{
+	        AndroidJavaClass jc = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+	        AndroidJavaObject jo = jc.GetStatic<AndroidJavaObject>("currentActivity");
+	        jo.Call("setLastSlideIndex", index);
+		}catch(Exception ex){
+			Debug.Log("===exception while setting last slide index in java==");
+			//not present while debuging
+		}
     }
 
     public void StartLerping(string direction)
