@@ -90,6 +90,7 @@ namespace Vuforia
                 {
                     lastTracked = true;
                     handler.lastTrackedSlide = obj;
+                    Debug.Log("Set lastTrackedSlide to:" + obj);
                 }
                 else
                 {

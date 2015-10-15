@@ -54,10 +54,10 @@ public class PresentationHandler : MonoBehaviour
         originalModelSize = new Vector3(1f, 1f, 1f);
         shiftedModelSize = originalModelSize * 2.0f;
 
-        originalTextPos = new Vector3(-4.9f, 0.02f, 3.21f);
+        originalTextPos = new Vector3(-4.9f, 0.12f, 3.21f);
         shiftedTextPos = new Vector3(originalTextPos.x * 0.2f - 2.0f, originalTextPos.y, originalTextPos.z * 0.2f);
 
-        originalBackgroundPos = new Vector3(0f, 0f, 0f);
+        originalBackgroundPos = new Vector3(0f, 0.1f, 0f);
         shiftedBackgroundPos = new Vector3(originalBackgroundPos.x - 2.0f, originalBackgroundPos.y, originalBackgroundPos.z);
 
         originalModelPos = new Vector3(6.0f, 1.0f, 0.0f);
@@ -82,6 +82,8 @@ public class PresentationHandler : MonoBehaviour
             imageSlides[i].FindComponentInChildWithTag<TextMesh>("SlideText").text = JS["slides"][i]["text"].Value;
             imageSlides[i].FindComponentInChildWithTag<Renderer>("SlideBackground").materials[0].SetTexture("_MainTex", textures[JS["slides"][i]["background"].AsInt]);
         }
+
+        lastTrackedSlide = imageSlides[0];
 
     }
 
