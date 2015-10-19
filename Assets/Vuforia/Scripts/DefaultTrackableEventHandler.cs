@@ -117,12 +117,6 @@ namespace Vuforia
             markerCurrentlyLost = true;
 
             /*
-            transform.parent.GetComponentInParent<GameObject>().FindComponentInChildWithTag<Transform>("SlideText").localEulerAngles = new Vector3(90.0f, 0f, 0f);
-            transform.parent.GetComponentInParent<GameObject>().FindComponentInChildWithTag<Transform>("SlideBackground").localEulerAngles = new Vector3(0f, 0f, 0f);
-            transform.parent.GetComponentInParent<GameObject>().FindComponentInChildWithTag<Transform>("SlideModel").localEulerAngles = new Vector3(0f, 0f, 0f);
-            */
-
-            /*
             Renderer[] rendererComponents = GetComponentsInChildren<Renderer>(true);
             Collider[] colliderComponents = GetComponentsInChildren<Collider>(true);
 
@@ -150,16 +144,18 @@ namespace Vuforia
         void FixedUpdate()
         {
 
-            float currentTime = Time.time;
-            //Debug.Log("CurrentTime - timeAtWhichMarkerLost = " + (currentTime - timeAtWhichMarkerLost));
-            //Debug.Log("markerLost: " + markerCurrentlyLost);
-
-            if ((currentTime - timeAtWhichMarkerLost >= 2.0f) && markerCurrentlyLost)
+            if (markerCurrentlyLost)
             {
+                float currentTime = Time.time;
+                //Debug.Log("CurrentTime - timeAtWhichMarkerLost = " + (currentTime - timeAtWhichMarkerLost));
+                //Debug.Log("markerLost: " + markerCurrentlyLost);
 
-                Renderer[] rendererComponents = GetComponentsInChildren<Renderer>(true);
-                Collider[] colliderComponents = GetComponentsInChildren<Collider>(true);
-                
+                if (currentTime - timeAtWhichMarkerLost >= 2.0f)
+                {
+
+                    Renderer[] rendererComponents = GetComponentsInChildren<Renderer>(true);
+                    Collider[] colliderComponents = GetComponentsInChildren<Collider>(true);
+
                     // Disable rendering:
                     foreach (Renderer component in rendererComponents)
                     {
@@ -172,7 +168,8 @@ namespace Vuforia
                         component.enabled = false;
                     }
 
-                Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " lost");
+                    Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " lost");
+                }
             }
         }
     }

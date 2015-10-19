@@ -41,31 +41,6 @@ public class PresentationHandler : MonoBehaviour
 
     public void Setup(string json) {
 
-
-
-        timeToSpendLerping = 3.0f;
-
-        isLeftFocus = true;
-        isRightFocus = false;
-
-        originalTextSize = new Vector3(0.4f, 0.4f, 0.04f);
-        shiftedTextSize = originalTextSize * 0.2f;
-
-        originalBackgroundSize = new Vector3(1.0f, 1.0f, 0.66f);
-        shiftedBackgroundSize = originalBackgroundSize * 0.2f;
-
-        originalModelSize = new Vector3(1f, 1f, 1f);
-        shiftedModelSize = originalModelSize * 2.0f;
-
-        originalTextPos = new Vector3(-4.9f, 0.12f, 3.21f);
-        shiftedTextPos = new Vector3(originalTextPos.x * 0.2f - 2.0f, originalTextPos.y, originalTextPos.z * 0.2f);
-
-        originalBackgroundPos = new Vector3(0f, 0.1f, 0f);
-        shiftedBackgroundPos = new Vector3(originalBackgroundPos.x - 2.0f, originalBackgroundPos.y, originalBackgroundPos.z);
-
-        originalModelPos = new Vector3(6.0f, 1.0f, 0.0f);
-        shiftedModelPos = new Vector3(originalModelPos.x * 0.2f, originalModelPos.y, originalModelPos.z);
-
         Debug.Log(json);
 
         var JS = JSON.Parse(json);
@@ -94,6 +69,33 @@ public class PresentationHandler : MonoBehaviour
 
         Setup("{\"name\":\"Test lecture one\",\"date\":\"2015-10-01 15:30\",\"speakers\":[{\"id\":\"01\",\"name\":\"Willy Wonka\"},{\"id\":\"02\",\"name\":\"Evel Knievel\"}],\"slides\":[{\"text\":\"Test <color=green>slide</color> 1\",\"background\":\"01\",\"3dmodel\":null},{\"text\":\"Test <color=red>slide</color> 2\",\"background\":\"02\",\"3dmodel\":null},{\"text\":\"Test <color=blue>slide</color> 3\",\"background\":\"03\",\"3dmodel\":null}]}");
 
+        // The amount of seconds that the lerp-animation should last
+        timeToSpendLerping = 3.0f;
+
+        // Setting The Slide as default focus
+        isLeftFocus = true;
+        isRightFocus = false;
+
+        // Storing the original Sizes and Positions of everything that is to be lerped
+        originalTextSize = imageSlides[0].FindComponentInChildWithTag<Transform>("SlideText").localScale;
+        shiftedTextSize = originalTextSize * 0.2f;
+
+        originalBackgroundSize = imageSlides[0].FindComponentInChildWithTag<Transform>("SlideBackground").localScale;
+        shiftedBackgroundSize = originalBackgroundSize * 0.2f;
+
+        originalModelSize = imageSlides[0].FindComponentInChildWithTag<Transform>("SlideModel").localScale;
+        shiftedModelSize = originalModelSize * 2.0f;
+
+        originalTextPos = imageSlides[0].FindComponentInChildWithTag<Transform>("SlideText").localPosition;
+        shiftedTextPos = new Vector3(originalTextPos.x * 0.2f - 2.0f, originalTextPos.y, originalTextPos.z * 0.2f);
+
+        originalBackgroundPos = imageSlides[0].FindComponentInChildWithTag<Transform>("SlideBackground").localPosition;
+        shiftedBackgroundPos = new Vector3(originalBackgroundPos.x - 2.0f, originalBackgroundPos.y, originalBackgroundPos.z);
+
+        originalModelPos = imageSlides[0].FindComponentInChildWithTag<Transform>("SlideModel").localPosition;
+        shiftedModelPos = new Vector3(originalModelPos.x * 0.2f, originalModelPos.y, originalModelPos.z);
+
+        //Making sure the camera uses Auto-focus
         VuforiaBehaviour.Instance.RegisterVuforiaStartedCallback(OnVuforiaStarted);
         VuforiaBehaviour.Instance.RegisterOnPauseCallback(OnPaused);
     }
@@ -119,7 +121,7 @@ public class PresentationHandler : MonoBehaviour
         lastTrackedSlideIndex = int.Parse(index);
         AndroidJavaClass jc = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
         AndroidJavaObject jo = jc.GetStatic<AndroidJavaObject>("currentActivity");
-        //jo.Call(“setLastSlideIndex”, index);
+        jo.Call("setLastSlideIndex", index);
     }
 
     public void StartLerping(string direction)

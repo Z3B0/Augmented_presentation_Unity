@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 41d233d18987bf54c97ca11b82febbb9
-timeCreated: 1444755235
+guid: 12431205748662a48a7f0932a63f3828
+timeCreated: 1445270013
 licenseType: Free
 ModelImporter:
   serializedVersion: 18
@@ -10813,8 +10813,8 @@ ModelImporter:
     4304302: Tapa_1060
   materials:
     importMaterials: 1
-    materialName: 0
-    materialSearch: 1
+    materialName: 1
+    materialSearch: 0
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
