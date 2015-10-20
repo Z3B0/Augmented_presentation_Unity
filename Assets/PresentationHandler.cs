@@ -42,8 +42,6 @@ public class PresentationHandler : MonoBehaviour
 
     public void Setup(string json) {
 
-        Debug.Log(json);
-
         var JS = JSON.Parse(json);
 
         Texture[] textures = Resources.LoadAll<Texture>("Textures");
@@ -57,18 +55,22 @@ public class PresentationHandler : MonoBehaviour
         */
 
         for (int i = 0; i < imageSlides.Length; i++) {
+
+            imageSlides[i].FindComponentInChildWithTag<TextMesh>("SlideText").text = "";
+            imageSlides[i].FindComponentInChildWithTag<Renderer>("SlideBackground").materials[0].SetTexture("_MainTex", textures[i]);
+            /*
             imageSlides[i].FindComponentInChildWithTag<TextMesh>("SlideText").richText = true;
             imageSlides[i].FindComponentInChildWithTag<TextMesh>("SlideText").text = JS["slides"][i]["text"].Value;
             imageSlides[i].FindComponentInChildWithTag<Renderer>("SlideBackground").materials[0].SetTexture("_MainTex", textures[JS["slides"][i]["background"].AsInt]);
+            */
         }
 
     }
 
 
-    // Use this for initialization
     void Start() {
 
-        Setup("{\"name\":\"Test lecture one\",\"date\":\"2015-10-01 15:30\",\"speakers\":[{\"id\":\"01\",\"name\":\"Willy Wonka\"},{\"id\":\"02\",\"name\":\"Evel Knievel\"}],\"slides\":[{\"text\":\"Test <color=green>slide</color> 1\",\"background\":\"01\",\"3dmodel\":null},{\"text\":\"Test <color=red>slide</color> 2\",\"background\":\"02\",\"3dmodel\":null},{\"text\":\"Test <color=blue>slide</color> 3\",\"background\":\"03\",\"3dmodel\":null}]}");
+        Setup("{\"name\":\"Test lecture one\",\"date\":\"2015-10-01 15:30\",\"speakers\":[{\"id\":\"01\",\"name\":\"Willy Wonka\"},{\"id\":\"02\",\"name\":\"Evel Knievel\"}],\"slides\":[{\"text\":\"\",\"background\":\"0\",\"3dmodel\":null},{\"text\":\"\",\"background\":\"01\",\"3dmodel\":null},{\"text\":\"\",\"background\":\"02\",\"3dmodel\":null}]}");
 
         // The amount of seconds that the lerp-animation should last
         timeToSpendLerping = 3.0f;
@@ -110,7 +112,7 @@ public class PresentationHandler : MonoBehaviour
     {
         if (!paused) // resumed
         {
-            // Set again autofocus mode when app is resumed
+            // Set autofocus mode again when app is resumed
             CameraDevice.Instance.SetFocusMode(CameraDevice.FocusMode.FOCUS_MODE_CONTINUOUSAUTO);
         }
     }
@@ -136,16 +138,13 @@ public class PresentationHandler : MonoBehaviour
         {
             isLerpingLeft = true;
             timeStartedLerping = Time.time;
-            Debug.Log("Started lerping left");
         } else if ((direction == "right") && (!isLerpingLeft && !isLerpingRight) && (!isRightFocus))
         {
             isLerpingRight = true;
             timeStartedLerping = Time.time;
-            Debug.Log("Started lerping right");
         }
     }
 
-    // Update is called once per frame
     void Update() {
 
         if(Input.GetKeyDown("a"))
@@ -182,7 +181,6 @@ public class PresentationHandler : MonoBehaviour
                 isLerpingRight = false;
                 isRightFocus = true;
                 isLeftFocus = false;
-                Debug.Log("Lerping right complete, isRightFocus = " + isRightFocus);
             }
 
         } else if(isLerpingLeft) {
@@ -205,7 +203,6 @@ public class PresentationHandler : MonoBehaviour
                 isLerpingLeft = false;
                 isLeftFocus = true;
                 isRightFocus = false;
-                Debug.Log("Lerping left complete");
             }
 
         }

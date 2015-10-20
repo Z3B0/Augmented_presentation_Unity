@@ -136,7 +136,6 @@ namespace Vuforia
             }
             */
             Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + "temporarily lost");
-            Debug.Log("Time marker got lost: " + timeAtWhichMarkerLost);
         }
 
         #endregion // PRIVATE_METHODS
