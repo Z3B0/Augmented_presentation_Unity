@@ -25,9 +25,14 @@ public class PresentationHandler : MonoBehaviour
     private Vector3 originalModelPos;
     private Vector3 shiftedModelPos;
 
+    private float totalRotation;
+    //Rotation speed for the model
+    private float degreesPerSecond;
+
     //Whether we are currently interpolating or not
     private bool isLerpingLeft;
     private bool isLerpingRight;
+    private bool isRotating;
 
     //What position we are currently in
     private bool isLeftFocus;
@@ -36,8 +41,9 @@ public class PresentationHandler : MonoBehaviour
     //The Time.time value when we started the interpolation
     private float timeStartedLerping;
 
-    //The time we want to spend on lerping;
+    //The time we want to spend on moving the objects
     private float timeToSpendLerping;
+    
 
 
     public void Setup(string json) {
@@ -74,6 +80,8 @@ public class PresentationHandler : MonoBehaviour
 
         // The amount of seconds that the lerp-animation should last
         timeToSpendLerping = 3.0f;
+
+        degreesPerSecond = 45.0f;
 
         // Setting The Slide as default focus
         isLeftFocus = true;
@@ -134,20 +142,34 @@ public class PresentationHandler : MonoBehaviour
 
     public void StartLerping(string direction)
     {
-        if ((direction == "left") && (!isLerpingLeft && !isLerpingRight) && (!isLeftFocus))
+
+        if ((!isLerpingLeft && !isLerpingRight) && !isRotating)
         {
-            isLerpingLeft = true;
-            timeStartedLerping = Time.time;
-        } else if ((direction == "right") && (!isLerpingLeft && !isLerpingRight) && (!isRightFocus))
+            if (direction == "left" && !isLeftFocus)
+            {
+                isLerpingLeft = true;
+                timeStartedLerping = Time.time;
+            }
+            else if (direction == "right" && !isRightFocus)
+            {
+                isLerpingRight = true;
+                timeStartedLerping = Time.time;
+            }
+        }
+    }
+
+    public void RotateModel(string dirr)
+    {
+        if((!isLerpingLeft && !isLerpingRight) && !isRotating)
         {
-            isLerpingRight = true;
+            isRotating = true;
             timeStartedLerping = Time.time;
         }
     }
 
-    void Update() {
-
-        if(Input.GetKeyDown("a"))
+    void Update()
+    {
+        if (Input.GetKeyDown("a"))
         {
             StartLerping("left");
         }
@@ -155,12 +177,15 @@ public class PresentationHandler : MonoBehaviour
         {
             StartLerping("right");
         }
-
+        if (Input.GetKeyDown("r"))
+        {
+            RotateModel("derp");
+        }
     }
 
     void FixedUpdate()
     {
-        if(isLerpingRight)
+        if (isLerpingRight)
         {
 
             float timeSinceStarted = Time.time - timeStartedLerping;
@@ -176,14 +201,16 @@ public class PresentationHandler : MonoBehaviour
             imageSlides[lastTrackedSlideIndex].FindComponentInChildWithTag<Transform>("SlideBackground").localPosition = Vector3.Lerp(originalBackgroundPos, shiftedBackgroundPos, percentageComplete);
             imageSlides[lastTrackedSlideIndex].FindComponentInChildWithTag<Transform>("SlideModel").localPosition = Vector3.Lerp(originalModelPos, shiftedModelPos, percentageComplete);
 
-            if(percentageComplete >= 1.0f)
+            if (percentageComplete >= 1.0f)
             {
                 isLerpingRight = false;
                 isRightFocus = true;
                 isLeftFocus = false;
             }
 
-        } else if(isLerpingLeft) {
+        }
+        else if (isLerpingLeft)
+        {
 
             float timeSinceStarted = Time.time - timeStartedLerping;
             float percentageComplete = timeSinceStarted / timeToSpendLerping;
@@ -206,5 +233,21 @@ public class PresentationHandler : MonoBehaviour
             }
 
         }
+        
+        else if (isRotating)
+        {
+
+            imageSlides[lastTrackedSlideIndex].FindComponentInChildWithTag<Transform>("SlideModel").Rotate(0.0f, Time.deltaTime * degreesPerSecond, 0.0f, Space.World);
+
+            totalRotation += Time.deltaTime * degreesPerSecond;
+            Debug.Log("TotalRotation: " + totalRotation);
+
+            if (Mathf.Abs(totalRotation) >= Mathf.Abs(45))
+            {
+                isRotating = false;
+                totalRotation = 0.0f;
+            }
+        }
+        
     }
 }
