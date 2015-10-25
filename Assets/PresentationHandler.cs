@@ -79,9 +79,9 @@ public class PresentationHandler : MonoBehaviour
         Setup("{\"name\":\"Test lecture one\",\"date\":\"2015-10-01 15:30\",\"speakers\":[{\"id\":\"01\",\"name\":\"Willy Wonka\"},{\"id\":\"02\",\"name\":\"Evel Knievel\"}],\"slides\":[{\"text\":\"\",\"background\":\"0\",\"3dmodel\":null},{\"text\":\"\",\"background\":\"01\",\"3dmodel\":null},{\"text\":\"\",\"background\":\"02\",\"3dmodel\":null}]}");
 
         // The amount of seconds that the lerp-animation should last
-        timeToSpendLerping = 3.0f;
+        timeToSpendLerping = 1.0f;
 
-        degreesPerSecond = 45.0f;
+        degreesPerSecond = 90.0f;
 
         // Setting The Slide as default focus
         isLeftFocus = true;
